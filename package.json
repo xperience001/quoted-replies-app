@@ -1,0 +1,19 @@
+{
+  "name": "quoted_replies",
+  "version": "1.0.0",
+  "description": "Shows a link to the quoted replies for a tweet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "twitter",
+    "quotes"
+  ],
+  "author": "tuvi",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^6.1.0",
+    "twitter": "^1.7.1"
+  }
+}
