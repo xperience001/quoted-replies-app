@@ -16,8 +16,13 @@ var stream = client.stream(
 );
 
 stream.on('data', function(tweet) {
-  var status = prepareStatus(tweet);
-  sendStatus(status, tweet.id_str);
+  if (tweet && tweet.in_reply_to_status_id_str && tweet.in_reply_to_screen_name) {
+    var status = prepareStatus(tweet);
+    sendStatus(status, tweet.id_str);
+  } else {
+    console.log('this is a retweet, not a mention.');
+    console.log(tweet.text);
+  }
 });
 
 stream.on('error', function(error) {
