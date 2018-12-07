@@ -16,11 +16,7 @@ var stream = client.stream(
 );
 
 stream.on('data', function(tweet) {
-  if (
-    tweet
-    && tweet.in_reply_to_status_id_str
-    && tweet.in_reply_to_screen_name
-    && tweet.length < 24) {
+  if (isValidMention(tweet)) {
     var status = prepareStatus(tweet);
     sendStatus(status, tweet.id_str);
   } else {
@@ -55,4 +51,19 @@ function prepareStatus(tweet) {
   var status = `${usernameString} \n${searchLinkType1} \n${searchLinkType2} \n✨😊`;
 
   return status;
+}
+
+function isValidMention(tweet) {
+  if (tweet && tweet.text) {
+    var text = tweet.text;
+    text = text.replace(/@\w+/g, '').trim();
+
+    if (tweet.in_reply_to_status_id_str
+      && tweet.in_reply_to_screen_name
+      && text.length < 10) {
+      return true;
+    }
+  }
+
+  return false;
 }
