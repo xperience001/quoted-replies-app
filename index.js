@@ -16,11 +16,15 @@ var stream = client.stream(
 );
 
 stream.on('data', function(tweet) {
-  if (tweet && tweet.in_reply_to_status_id_str && tweet.in_reply_to_screen_name) {
+  if (
+    tweet
+    && tweet.in_reply_to_status_id_str
+    && tweet.in_reply_to_screen_name
+    && tweet.length < 24) {
     var status = prepareStatus(tweet);
     sendStatus(status, tweet.id_str);
   } else {
-    console.log('this is a retweet, not a mention.');
+    console.log('this is a retweet, not a mention; or it is a mention to ignore.');
     console.log(tweet.text);
   }
 });
