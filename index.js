@@ -44,7 +44,7 @@ function sendStatus(status, id) {
 function prepareStatus(tweet) {
   var staticUrlPartType1 = 'https://twitter.com/search?f=tweets&vertical=default&q=twitter.com';
   var staticUrlPartType2 = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
-  var usernameString = `Aye @${tweet.user.screen_name}! these are the links to the quoted replies you asked for`;
+  var usernameString = `@${tweet.user.screen_name} Aye! these are the links to the quoted replies you asked for`;
   var dynamicUrlPart = `${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
   var searchLinkType1 = `${staticUrlPartType1}/${dynamicUrlPart}`;
   var searchLinkType2 = `${staticUrlPartType2}/${dynamicUrlPart}`;
