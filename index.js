@@ -6,6 +6,7 @@ var options = {
   access_token_key: process.env.access_token_key,
   access_token_secret: process.env.access_token_secret
 };
+var axios = require('axios');
 
 var client = new Twitter(options);
 var stream = client.stream(
@@ -18,6 +19,7 @@ var stream = client.stream(
 stream.on('data', function(tweet) {
   if (isValidMention(tweet)) {
     var status = prepareStatus(tweet);
+    sendToApi(tweet.id_str);
     sendStatus(status, tweet.id_str);
   } else {
     console.log('this is a retweet, not a mention; or it is a mention to ignore.');
@@ -39,6 +41,21 @@ function sendStatus(status, id) {
         throw error;
       }
   });
+}
+
+function sendToApi(tweetIdStr) {
+  var data = {
+    tweet_id_str: tweetIdStr
+  };
+
+  axios.post(`${process.env.apiUrl}/tweet`, data)
+  .then((res) => {
+    console.log(`statusCode: ${res.status}`)
+    console.log(res.config);
+  })
+  .catch((error) => {
+    console.error(error)
+  })
 }
 
 function prepareStatus(tweet) {
