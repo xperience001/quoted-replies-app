@@ -48,7 +48,7 @@ function sendToApi(tweetIdStr) {
     tweet_id_str: tweetIdStr
   };
 
-  axios.post(`${process.env.apiUrl}/tweet`, data)
+  axios.post(`${process.env.api_url}/tweet`, data)
   .then((res) => {
     console.log(`statusCode: ${res.status}`)
     console.log(res.config);
