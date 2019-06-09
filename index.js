@@ -19,7 +19,7 @@ var stream = client.stream(
 stream.on('data', function(tweet) {
   if (isValidMention(tweet)) {
     var status = prepareStatus(tweet);
-    sendToApi(tweet.in_reply_to_status_id_str);
+    sendToApi(`https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`);
     sendStatus(status, tweet.id_str);
   } else {
     console.log('this is a retweet, not a mention; or it is a mention to ignore.');
