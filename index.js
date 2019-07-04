@@ -43,15 +43,17 @@ function sendStatus(status, id) {
 
 function prepareStatus(tweet) {
   var startWords = ['Psst', 'Aye', 'Holla', 'Hey'];
-  var index = Math.floor(Math.random() * startWords.length);
-  var startWord = startWords[index];
-  var staticUrlPartType1 = 'https://twitter.com/search?f=tweets&vertical=default&q=twitter.com';
-  var staticUrlPartType2 = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
-  var usernameString = `@${tweet.user.screen_name} ${startWord}! These are the links to the quoted replies you asked for!`;
+  var tweetTexts = ['Follow this link to view the quoted replies you asked for!', 'Because you asked nicely...', 'Here you go!'];
+  var startWordsIndex = Math.floor(Math.random() * startWords.length);
+  var tweetTextsIndex = Math.floor(Math.random() * tweetTexts.length);
+  var startWord = startWords[startWordsIndex];
+  var tweetText = tweetTexts[tweetTextsIndex];
+  var staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
+  var usernameString = `@${tweet.user.screen_name} ${startWord}! ${tweetText}`;
   var dynamicUrlPart = `${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
-  var searchLinkType1 = `${staticUrlPartType1}/${dynamicUrlPart}`;
-  var searchLinkType2 = `${staticUrlPartType2}/${dynamicUrlPart}`;
-  var status = `${usernameString} \n${searchLinkType1} \n${searchLinkType2} \n✨😊`;
+
+  var searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
+  var status = `${usernameString}\n${searchLink}\n✨😊`;
 
   return status;
 }
