@@ -17,6 +17,7 @@ var stream = client.stream(
 );
 
 stream.on('data', function(tweet) {
+  console.log(tweet);
   if (isValidMention(tweet)) {
     var status = prepareStatus(tweet);
     sendToApi(`https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`);
