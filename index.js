@@ -12,19 +12,73 @@ var client = new Twitter(options);
 var stream = client.stream(
   'statuses/filter',
   {
-    track: '@quotedreplies please'
+    track: '@quotedreplies'
   }
 );
 
+let addValidityInfoToTweet = (tweet) => {
+  // ignore if it's a retweet
+  if (tweet.retweet_count > 0) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = 'Tweet is a retweet';
+    return tweet;
+  }
+
+  // ignore if the tweet is in reply to quotedreplies
+  if (tweet.in_reply_to_screen_name === 'QuotedReplies' && !tweet.is_quote_status) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = 'Tweet is a reply to QuotedReplies';
+    return tweet;
+  }
+
+  // ignore if it contains 'mention/use'
+  if (tweet.text && tweet.text.toLowerCase().includes('mention')
+    || tweet.text.toLowerCase().includes('use')
+    || tweet.text.toLowerCase().includes('try')
+  ) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = `Tweet contains 'mention', 'use' or 'try'`;
+    return tweet;
+  }
+
+  // the text does not contain the bot's name
+  if (tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = 'Tweet does not contain the bot name';
+    return tweet;
+  }
+
+  // ignore if tweet text without handles is too long
+  if (tweet.text && isTooLong(tweet.text)) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = 'Tweet text is too long';
+    return tweet;
+  }
+
+  tweet.should_ignore = false;
+  tweet.ignore_reason = null;
+  return tweet;
+}
+
+let getDynamicUrlPart = (tweet) => {
+  if (tweet.is_quote_status) {
+    return `${tweet.quoted_status.user.screen_name}/status/${tweet.quoted_status.quoted_status_id_str}`;
+  }
+
+  // if it's not a quote
+  return `${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
+}
+
 stream.on('data', function(tweet) {
-  console.log(tweet);
-  if (isValidMention(tweet)) {
+  tweet = addValidityInfoToTweet(tweet);
+
+  if (!tweet.should_ignore) {
     var status = prepareStatus(tweet);
-    sendToApi(`https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`);
+    sendToApi(`https://twitter.com/${getDynamicUrlPart(tweet)}`);
     sendStatus(status, tweet.id_str);
   } else {
-    console.log('this is a retweet, not a mention; or it is a mention to ignore.');
-    console.log(tweet.text);
+    console.log(`IGNORING TWEET BECAUSE :: ${tweet.ignore_reason}`);
+    console.log(tweet);
   }
 });
 
@@ -68,7 +122,7 @@ function prepareStatus(tweet) {
   var tweetText = tweetTexts[tweetTextsIndex];
   var staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
   var usernameString = `@${tweet.user.screen_name} ${startWord}! ${tweetText}`;
-  var dynamicUrlPart = `${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
+  let dynamicUrlPart = getDynamicUrlPart(tweet);
 
   var searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
   var status = `${usernameString}\n${searchLink}\n✨😊`;
@@ -76,17 +130,11 @@ function prepareStatus(tweet) {
   return status;
 }
 
-function isValidMention(tweet) {
-  if (tweet && tweet.text) {
-    var text = tweet.text;
-    text = text.replace(/@\w+/g, '').trim();
-
-    if (tweet.in_reply_to_status_id_str
-      && tweet.in_reply_to_screen_name
-      && text.length < 10) {
-      return true;
-    }
+let isTooLong = (text) => {
+  text = text.replace(/@\w+/g, '').trim();
+  if (text.length < 15) {
+    return false;
   }
 
-  return false;
+  return true;
 }
