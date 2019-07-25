@@ -122,11 +122,13 @@ function prepareStatus(tweet) {
   var startWord = startWords[startWordsIndex];
   var tweetText = tweetTexts[tweetTextsIndex];
   var staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
-  var usernameString = `@${tweet.user.screen_name} ${startWord}! ${tweetText}`;
+  // var usernameString = `@${tweet.user.screen_name} ${startWord}! ${tweetText}`;
+  let usernameString = `@${tweet.user.screen_name}`;
   let dynamicUrlPart = getDynamicUrlPart(tweet);
 
   var searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
-  var status = `${usernameString}\n${searchLink}\n✨😊`;
+  // var status = `${usernameString}\n${searchLink}\n✨😊`;
+  let status = `${usernameString}\n${searchLink}`;
 
   return status;
 }
