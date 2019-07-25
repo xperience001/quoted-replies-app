@@ -62,6 +62,7 @@ let addValidityInfoToTweet = (tweet) => {
 
 let getDynamicUrlPart = (tweet) => {
   if (tweet.is_quote_status) {
+    console.log(tweet.quoted_status);
     return `${tweet.quoted_status.user.screen_name}/status/${tweet.quoted_status.quoted_status_id_str}`;
   }
 
