@@ -88,7 +88,7 @@ stream.on('data', function(tweet) {
 
   if (!tweet.should_ignore) {
     var status = prepareStatus(tweet);
-    sendToApi(`https://twitter.com/${getDynamicUrlPart(tweet)}`);
+    // sendToApi(`https://twitter.com/${getDynamicUrlPart(tweet)}`);
     sendStatus(status, tweet.id_str);
   } else {
     console.log(`IGNORING TWEET BECAUSE :: ${tweet.ignore_reason}`);
