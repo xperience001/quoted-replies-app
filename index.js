@@ -41,9 +41,18 @@ let addValidityInfoToTweet = (tweet) => {
     return tweet;
   }
 
+  if (tweet.text) {
+    console.log(`just text :: ${tweet.text}`);
+  }
+
+  if (tweet.extended_tweet && tweet.extended_tweet.full_text) {
+    console.log(`full text :: ${tweet.extended_tweet.full_text}`);
+  }
+
   // the text does not contain the bot's name
   if (tweet.text
-      && (!tweet.text.toLowerCase().includes('quotedreplies') || (tweet.extended_tweet && tweet.extended_tweet.full_text && !tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')))
+      && (!tweet.text.toLowerCase().includes('quotedreplies')
+      || (tweet.extended_tweet && tweet.extended_tweet.full_text && !tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')))
     ) {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
