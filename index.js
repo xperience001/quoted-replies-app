@@ -56,9 +56,8 @@ let addValidityInfoToTweet = (tweet) => {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
     return tweet;
-  }
-
-  if (tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
+  } else if (tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
+    console.log(`to lower() for text :: ${tweet.text.toLowerCase()}`);
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
     return tweet;
