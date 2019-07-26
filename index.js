@@ -17,6 +17,12 @@ var stream = client.stream(
 );
 
 let addValidityInfoToTweet = (tweet) => {
+
+  tweet.is_valid_extended_tweet = false;
+  if (tweet.extended_tweet && tweet.extended_tweet.full_text && tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')) {
+    tweet.is_valid_extended_tweet = true;
+  }
+
   // ignore if it's a retweet
   if (tweet.retweet_count > 0) {
     tweet.should_ignore = true;
@@ -56,7 +62,9 @@ let addValidityInfoToTweet = (tweet) => {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
     return tweet;
-  } else if (tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
+  }
+
+  if (!tweet.is_valid_extended_tweet && tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
     console.log(`to lower() for text :: ${tweet.text.toLowerCase()}`);
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
