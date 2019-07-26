@@ -42,7 +42,9 @@ let addValidityInfoToTweet = (tweet) => {
   }
 
   // the text does not contain the bot's name
-  if (tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
+  if (tweet.text
+      && (!tweet.text.toLowerCase().includes('quotedreplies') || (tweet.extended_tweet && tweet.extended_tweet.full_text && !tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')))
+    ) {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
     return tweet;
@@ -62,6 +64,7 @@ let addValidityInfoToTweet = (tweet) => {
 
 let getDynamicUrlPart = (tweet) => {
   if (tweet.is_quote_status) {
+    console.log("just the quoted_status field of the tweet tweet");
     console.log(tweet.quoted_status);
     return `${tweet.quoted_status.user.screen_name}/status/${tweet.quoted_status.id_str}`;
   }
