@@ -159,6 +159,7 @@ function prepareStatus(tweet) {
 
 let isTooLong = (text) => {
   text = text.replace(/@\w+/g, '').trim();
+  text = text.replace(/https:\/\/\w.\w+\/\w+/g, '').trim();
   if (text.length < 15) {
     return false;
   }
