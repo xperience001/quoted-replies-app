@@ -99,10 +99,12 @@ stream.on('data', function(tweet) {
 
   if (!tweet.should_ignore) {
     var status = prepareStatus(tweet);
+    console.log("SENDING REPLY FOR VALID MENTION");
+    console.log(tweet.text);
     // sendToApi(`https://twitter.com/${getDynamicUrlPart(tweet)}`);
     sendStatus(status, tweet.id_str);
   } else {
-    console.log(`IGNORING TWEET BECAUSE :: ${tweet.ignore_reason}`);
+    console.log(`IGNORING TWEET BECAUSE :: ${tweet.ignore_reason} :: ${tweet.text}`);
     console.log(tweet);
   }
 });
