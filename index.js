@@ -101,6 +101,7 @@ stream.on('data', function(tweet) {
     var status = prepareStatus(tweet);
     console.log("SENDING REPLY FOR VALID MENTION");
     console.log(tweet.text);
+    console.log(tweet);
     // sendToApi(`https://twitter.com/${getDynamicUrlPart(tweet)}`);
     sendStatus(status, tweet.id_str);
   } else {
