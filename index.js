@@ -72,9 +72,9 @@ let addValidityInfoToTweet = (tweet) => {
   }
 
   // ignore if tweet text without handles is too long
-  if (tweet.text && isTooLong(tweet.text)) {
+  if (tweet.text && isSuspiciousLength(tweet.text)) {
     tweet.should_ignore = true;
-    tweet.ignore_reason = 'Tweet text is too long';
+    tweet.ignore_reason = 'Tweet text length is suspicious';
     return tweet;
   }
 
@@ -160,10 +160,10 @@ function prepareStatus(tweet) {
   return status;
 }
 
-let isTooLong = (text) => {
+let isSuspiciousLength = (text) => {
   text = text.replace(/@\w+/g, '').trim();
   text = text.replace(/https:\/\/\w.\w+\/\w+/g, '').trim();
-  if (text.length < 15) {
+  if (text.length === 0 || (text.length < 7 && text.length > 2)) {
     return false;
   }
 
