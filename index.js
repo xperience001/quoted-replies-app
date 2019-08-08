@@ -162,9 +162,7 @@ let isSuspiciousLength = (text) => {
   text = text.replace(/@\w+/g, '').trim();
   text = text.replace(/https:\/\/\w.\w+\/\w+/g, '').trim();
   if (text.length === 0 || (text.length < 7 && text.length > 2)) {
-    if (text.toLowerCase().includes('please') || text.toLowerCase().includes('pls')) {
-      return false;
-    }
+    return false;
   }
 
   return true;
