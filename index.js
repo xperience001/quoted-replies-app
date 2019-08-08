@@ -1,15 +1,15 @@
 require('dotenv').config();
-var Twitter = require('twitter');
-var options = {
+let Twitter = require('twitter');
+let options = {
   consumer_key: process.env.consumer_key,
   consumer_secret: process.env.consumer_secret,
   access_token_key: process.env.access_token_key,
   access_token_secret: process.env.access_token_secret
 };
-var axios = require('axios');
+let axios = require('axios');
 
-var client = new Twitter(options);
-var stream = client.stream(
+let client = new Twitter(options);
+let stream = client.stream(
   'statuses/filter',
   {
     track: '@quotedreplies'
@@ -94,11 +94,11 @@ let getDynamicUrlPart = (tweet) => {
   return `${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
 }
 
-stream.on('data', function(tweet) {
+stream.on('data', (tweet) => {
   tweet = addValidityInfoToTweet(tweet);
 
   if (!tweet.should_ignore) {
-    var status = prepareStatus(tweet);
+    let status = prepareStatus(tweet);
     console.log("SENDING REPLY FOR VALID MENTION");
     console.log(tweet.text);
     console.log(tweet);
@@ -110,24 +110,24 @@ stream.on('data', function(tweet) {
   }
 });
 
-stream.on('error', function(error) {
+stream.on('error', (error) => {
   throw error;
 });
 
-function sendStatus(status, id) {
+let sendStatus = (status, id) => {
   client.post('statuses/update',
     {
       status: status,
       in_reply_to_status_id: id
-    }, function (err, data) {
+    }, (err, data) => {
       if (err) {
         throw error;
       }
   });
 }
 
-function sendToApi(tweetIdStr) {
-  var data = {
+let sendToApi = (tweetIdStr) => {
+  let data = {
     tweet_id_str: tweetIdStr
   };
 
@@ -141,20 +141,18 @@ function sendToApi(tweetIdStr) {
   })
 }
 
-function prepareStatus(tweet) {
-  var startWords = ['Psst', 'Aye', 'Holla', 'Hey'];
-  var tweetTexts = ['Follow this link to view the quoted replies you asked for!', 'Because you asked nicely...', 'Here you go!'];
-  var startWordsIndex = Math.floor(Math.random() * startWords.length);
-  var tweetTextsIndex = Math.floor(Math.random() * tweetTexts.length);
-  var startWord = startWords[startWordsIndex];
-  var tweetText = tweetTexts[tweetTextsIndex];
-  var staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
-  // var usernameString = `@${tweet.user.screen_name} ${startWord}! ${tweetText}`;
+let prepareStatus = (tweet) => {
+  let startWords = ['Psst', 'Aye', 'Holla', 'Hey'];
+  let tweetTexts = ['Follow this link to view the quoted replies you asked for!', 'Because you asked nicely...', 'Here you go!'];
+  let startWordsIndex = Math.floor(Math.random() * startWords.length);
+  let tweetTextsIndex = Math.floor(Math.random() * tweetTexts.length);
+  let startWord = startWords[startWordsIndex];
+  let tweetText = tweetTexts[tweetTextsIndex];
+  let staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
   let usernameString = `@${tweet.user.screen_name}`;
   let dynamicUrlPart = getDynamicUrlPart(tweet);
 
-  var searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
-  // var status = `${usernameString}\n${searchLink}\n✨😊`;
+  let searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
   let status = `${usernameString}\n${searchLink}`;
 
   return status;
@@ -164,7 +162,9 @@ let isSuspiciousLength = (text) => {
   text = text.replace(/@\w+/g, '').trim();
   text = text.replace(/https:\/\/\w.\w+\/\w+/g, '').trim();
   if (text.length === 0 || (text.length < 7 && text.length > 2)) {
-    return false;
+    if (text.toLowerCase().includes('please') || text.toLowerCase().includes('pls')) {
+      return false;
+    }
   }
 
   return true;
