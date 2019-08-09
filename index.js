@@ -142,15 +142,17 @@ let sendToApi = (tweetIdStr) => {
 }
 
 let prepareStatus = (tweet) => {
-  let startWords = ['Psst', 'Aye', 'Holla', 'Hey'];
-  let tweetTexts = ['Follow this link to view the quoted replies you asked for!', 'Because you asked nicely...', 'Here you go!'];
-  let startWordsIndex = Math.floor(Math.random() * startWords.length);
+  let specialUsers = ['', ''];
+  let tweetTexts = [`Because you're super special 😁...`];
   let tweetTextsIndex = Math.floor(Math.random() * tweetTexts.length);
-  let startWord = startWords[startWordsIndex];
   let tweetText = tweetTexts[tweetTextsIndex];
   let staticUrlPart = 'https://twitter.com/search?f=tweets&vertical=default&q=https://twitter.com';
   let usernameString = `@${tweet.user.screen_name}`;
   let dynamicUrlPart = getDynamicUrlPart(tweet);
+
+  if (specialUsers.includes(tweet.user.id_str)) {
+    staticUrlPart = `${tweetText} ${staticUrlPart}`;
+  }
 
   let searchLink = `${staticUrlPart}/${dynamicUrlPart}`;
   let status = `${usernameString}\n${searchLink}`;
@@ -161,7 +163,7 @@ let prepareStatus = (tweet) => {
 let isSuspiciousLength = (text) => {
   text = text.replace(/@\w+/g, '').trim();
   text = text.replace(/https:\/\/\w.\w+\/\w+/g, '').trim();
-  if (text.length === 0 || (text.length < 7 && text.length > 2)) {
+  if (text.length === 0 || (text.length < 7) && (text.toLowerCase().includes('please') || text.toLowerCase().includes('pls'))) {
     return false;
   }
 
