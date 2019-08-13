@@ -38,9 +38,11 @@ let addValidityInfoToTweet = (tweet) => {
   }
 
   // ignore if it contains 'mention/use'
-  if (tweet.text && tweet.text.toLowerCase().includes('mention')
-    || tweet.text.toLowerCase().includes('use')
-    || tweet.text.toLowerCase().includes('try')
+  let textWithoutHandles = tweet.text.replace(/@\w+/g, '').trim();
+
+  if (textWithoutHandles && textWithoutHandles.toLowerCase().includes('mention')
+    || textWithoutHandles.toLowerCase().includes('use')
+    || textWithoutHandles.toLowerCase().includes('try')
   ) {
     tweet.should_ignore = true;
     tweet.ignore_reason = `Tweet contains 'mention', 'use' or 'try'`;
