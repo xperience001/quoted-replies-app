@@ -17,10 +17,15 @@ let stream = client.stream(
 );
 
 let addValidityInfoToTweet = (tweet) => {
+  // re-assign tweet.text if this is an extended tweet... rather than do different checks along the way for both tweet.text and tweet.extended_tweet.full_text
+  if (tweet.extended_tweet && tweet.extended_tweet.full_text) {
+    tweet.text = tweet.extended_tweet.full_text;
+  }
 
-  tweet.is_valid_extended_tweet = false;
-  if (tweet.extended_tweet && tweet.extended_tweet.full_text && tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')) {
-    tweet.is_valid_extended_tweet = true;
+  if (!tweet.text) {
+    tweet.should_ignore = true;
+    tweet.ignore_reason = 'Tweet text is empty';
+    return tweet;
   }
 
   // ignore if it's a retweet
@@ -49,32 +54,14 @@ let addValidityInfoToTweet = (tweet) => {
     return tweet;
   }
 
-  if (tweet.text) {
-    console.log(`just text :: ${tweet.text}`);
-  }
-
-  if (tweet.extended_tweet && tweet.extended_tweet.full_text) {
-    console.log(`full text :: ${tweet.extended_tweet.full_text}`);
-  }
-
-  // the text does not contain the bot's name
-  if (tweet.extended_tweet && tweet.extended_tweet.full_text && !tweet.extended_tweet.full_text.toLowerCase().includes('quotedreplies')) {
-    console.log(`to lower() for full text :: ${tweet.extended_tweet.full_text.toLowerCase()}`);
-    console.log('quotedreplies');
-    tweet.should_ignore = true;
-    tweet.ignore_reason = 'Tweet does not contain the bot name';
-    return tweet;
-  }
-
-  if (!tweet.is_valid_extended_tweet && tweet.text && !tweet.text.toLowerCase().includes('quotedreplies')) {
-    console.log(`to lower() for text :: ${tweet.text.toLowerCase()}`);
+  if (!tweet.text.toLowerCase().includes('quotedreplies')) {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet does not contain the bot name';
     return tweet;
   }
 
   // ignore if tweet text without handles is too long
-  if (tweet.text && isSuspiciousLength(tweet.text)) {
+  if (isSuspiciousLength(tweet.text)) {
     tweet.should_ignore = true;
     tweet.ignore_reason = 'Tweet text length is suspicious';
     return tweet;
@@ -87,8 +74,6 @@ let addValidityInfoToTweet = (tweet) => {
 
 let getDynamicUrlPart = (tweet) => {
   if (tweet.is_quote_status) {
-    console.log("just the quoted_status field of the tweet tweet");
-    console.log(tweet.quoted_status);
     return `${tweet.quoted_status.user.screen_name}/status/${tweet.quoted_status.id_str}`;
   }
 
