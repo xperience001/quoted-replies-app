@@ -17,7 +17,8 @@ let stream = client.stream(
 );
 
 let addValidityInfoToTweet = (tweet) => {
-  // re-assign tweet.text if this is an extended tweet... rather than do different checks along the way for both tweet.text and tweet.extended_tweet.full_text
+  // re-assign tweet.text if this is an extended tweet... 
+  // ...rather than do different checks along the way for both tweet.text and tweet.extended_tweet.full_text
   if (tweet.extended_tweet && tweet.extended_tweet.full_text) {
     tweet.text = tweet.extended_tweet.full_text;
   }
