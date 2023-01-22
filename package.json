@@ -1,5 +1,5 @@
 {
-  "name": "quoted_replies",
+  "name": "quoted replies",
   "version": "1.0.0",
   "description": "Shows a link to the quoted replies for a tweet",
   "main": "index.js",
